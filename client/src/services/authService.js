@@ -1,22 +1,27 @@
 import api from './api';
 
+const storeAuthSession = ({ user, accessToken, refreshToken }) => {
+  if (!user || !accessToken || !refreshToken) {
+    throw new Error('Authentication response did not include the user and both tokens');
+  }
+
+  localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('refreshToken', refreshToken);
+  localStorage.setItem('user', JSON.stringify(user));
+};
+
 export const authService = {
   // Register user
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
+    storeAuthSession(response.data.data);
     return response.data;
   },
 
   // Login user
   login: async (credentials) => {
     const response = await api.post('/auth/login', credentials);
-    const { user, accessToken, refreshToken } = response.data.data;
-    
-    // Store tokens and user data
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('user', JSON.stringify(user));
-    
+    storeAuthSession(response.data.data);
     return response.data;
   },
 
