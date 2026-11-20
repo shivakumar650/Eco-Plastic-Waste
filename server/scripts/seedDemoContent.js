@@ -20,9 +20,9 @@ const upsertDemoRecords = async (Model, records, previousTitles = {}) => {
   }
 };
 
-const seedDemoContent = async () => {
-  if (process.env.NODE_ENV === 'production') {
-    throw new Error('Demo content cannot be seeded in production');
+const seedDemoContent = async ({ allowProduction = false } = {}) => {
+  if (process.env.NODE_ENV === 'production' && !allowProduction) {
+    throw new Error('Production demo seeding requires the --allow-production flag');
   }
 
   if (!process.env.MONGODB_URI) {
@@ -147,7 +147,9 @@ const seedDemoContent = async () => {
 };
 
 if (require.main === module) {
-  seedDemoContent().catch((error) => {
+  seedDemoContent({
+    allowProduction: process.argv.includes('--allow-production')
+  }).catch((error) => {
     console.error('Failed to seed demo content:', error.message);
     process.exitCode = 1;
   });

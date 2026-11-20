@@ -151,7 +151,12 @@ cd server
 npm run seed:demo
 ```
 
-The command is idempotent and is blocked when `NODE_ENV=production`. Use it only with a development/demo database.
+The command is idempotent and refuses to run when `NODE_ENV=production`. To deliberately add the same clearly labeled sample records to the production database, open the Render API service's Shell after deployment and run:
+```bash
+npm run seed:showcase
+```
+
+This is a one-time, explicit operation; normal server starts never seed showcase data. The seed command requires the production `MONGODB_URI` and admin environment variables to be configured in Render.
 
 ### 5. Start the Application
 
